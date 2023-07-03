@@ -1,81 +1,43 @@
+import { createComponent } from "./input-component.js";
 
-export function createComponent(componentElement) {
-    const tmpInput = componentElement.querySelector('template.app-tmp-input');
-  
-    const inputslist = tmpInput.parentElement;
-   
+export function createSection(sectionElement) {
+  const secInput = sectionElement.querySelector("template.app-tmp-section");
+  const secList = secInput.parentElement;
 
-    const updateResult = () => {
-        const children = [...inputslist.children].filter(
-            (elem) => elem !== tmpInput,
-        );
-
-    const result = children.reduce(
-        (carry, element) =>
-        carry +
-        element.querySelector('input[type="number"].app-cmp-input')
-            .valueAsNumber,
-            0,
-    );
-
-    [...componentElement.querySelectorAll('output.app-cmp-result')].forEach(
-        (elem) => (elem.value = `${result.toLocaleString()}`),
-
-    );
-    };
-
-
-    const updatelist = () => {
-        updateResult();
-
-        const children = [...inputslist.children].filter(
-            (elem) => elem !== tmpInput,
-        );
-        
-        
-
-        children.forEach((element, i) => {
-            [...element.querySelectorAll('.app-cmp-input-no')].forEach(
-                (elem) => (elem.textContent = `${i + 1}`),
-            );
-        });
-
-        [...inputslist.querySelectorAll('.app-cmd-remove-input')].forEach(
-            (elem) => (elem.disable = children.length === 1),
-            );
-    };
-
-    const createElement = () => {
-        const container = tmpInput.content.cloneNode(true).firstElementChild;
-
-        container.addEventListener('click', (ev) => {
-            if(ev.target.matches('.app-cmd-remove-input')) {
-                container.remove();
-
-                updatelist();
-            }
-        });
-
-        inputslist.append(container);
-        updatelist();
-    };
-
-    componentElement.addEventListener('click', (ev) => {
-        if(ev.target.matches('.app-cmd-add-input')) {
-            createElement();
-        }
+  const updateList = () => {
+    const children = [...secList.children].filter((elem) => elem !== secInput);
+    console.debug(children);
+    children.forEach((element, i) => {
+      [...element.querySelectorAll(".app-cmp-sec-no")].forEach(
+        (elem) => (elem.textContent = `${i + 1}`)
+      );
     });
 
-    inputslist.addEventListener('change', (ev) => {
-        if(ev.target.matches('input[type="number"].app-cmp-input')) {
-            updateResult();
-        }
+    [...secList.querySelectorAll(".app-cmp-remove-sec")].forEach(
+      (elem) => (elem.disabled = children.length === 1)
+    );
+  };
+
+  const createElement = () => {
+    const container = secInput.content.cloneNode(true).firstElementChild;
+
+    container.addEventListener("click", (ev) => {
+      if (ev.target.matches(".app-cmp-remove-sec")) {
+        container.remove();
+
+        updateList();
+      }
     });
 
-    createElement();
-};
+    secList.append(container);
+    createComponent(container);
+    updateList();
+  };
 
-
-document.addEventListener('DOMContentLoaded', () => {
-   createComponent(document.body);
-});
+  sectionElement.addEventListener("click", (ev) => {
+    if (ev.target.matches(".app-cmp-add-sec")) {
+      createElement();
+    }
+  });
+  createElement();
+}
